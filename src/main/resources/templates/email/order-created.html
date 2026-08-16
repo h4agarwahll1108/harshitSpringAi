@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Created</title>
+</head>
+
+<body>
+
+<h2>Hello <span th:text="${customerName}">Customer</span></h2>
+
+<p>Your order has been successfully created.</p>
+
+<p>
+    Order ID:
+    <strong th:text="${orderId}">ORD123</strong>
+</p>
+
+<p>
+    Amount:
+    <strong th:text="${amount}">1000</strong>
+</p>
+
+<p>Thank you for your order.</p>
+
+</body>
+</html>

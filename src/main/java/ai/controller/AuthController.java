@@ -1,7 +1,7 @@
 package ai.controller;
 
 import ai.dto.*;
-import ai.helper.AuthService;
+import ai.serviceImpl.AuthService;
 
 import jakarta.validation.Valid;
 

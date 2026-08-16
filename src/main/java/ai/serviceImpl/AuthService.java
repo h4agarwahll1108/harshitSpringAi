@@ -1,12 +1,10 @@
-package ai.helper;
+package ai.serviceImpl;
 
-import ai.dto.AuthResponse;
-import ai.dto.LoginRequest;
-import ai.dto.RefreshTokenRequest;
-import ai.dto.RegisterRequest;
+import ai.dto.*;
 import ai.exception.ServiceProvisioningException;
 import ai.model.RefreshToken;
 import ai.model.User;
+import ai.repository.EmailService;
 import ai.repository.RefreshTokenRepository;
 import ai.repository.UserRepository;
 import ai.security.JwtService;
@@ -14,6 +12,7 @@ import ai.security.JwtService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
@@ -25,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -38,6 +38,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     public AuthResponse register(RegisterRequest request) {
 
@@ -56,6 +57,12 @@ public class AuthService {
                 .build();
         userRepository.save(user);
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        try {
+            sendRegistrationEmail(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+//            log.error("User registered but registration email failed. email={}",user.getEmail(),e);
+        }
         return generateAuthResponse(userDetails, user);
     }
 
@@ -126,5 +133,18 @@ public class AuthService {
             token.setRevoked(true);
             refreshTokenRepository.save(token);
         });
+    }
+
+    private void sendRegistrationEmail(User user) {
+        EmailRequest emailRequest = EmailRequest.builder()
+                .to(user.getEmail())
+                .subject("Registration Successful")
+                .templateName("registration-success")
+                .variables(Map.of(
+                        "userName", user.getUsername(),
+                        "email", user.getEmail()
+                ))
+                .build();
+        emailService.send(emailRequest);
     }
 }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Successful</title>
+</head>
+
+<body>
+
+<h2>
+    Welcome, <span th:text="${userName}">User</span>!
+</h2>
+
+<p>
+    Your registration has been completed successfully.
+</p>
+
+<p>
+    Your account is now ready to use.
+</p>
+
+<table>
+    <tr>
+        <td><strong>Name:</strong></td>
+        <td th:text="${userName}">Harshit</td>
+    </tr>
+
+    <tr>
+        <td><strong>Email:</strong></td>
+        <td th:text="${email}">user@gmail.com</td>
+    </tr>
+</table>
+
+<p>
+    You can now log in to your account using your registered credentials.
+</p>
+
+<p>
+    Thank you for registering with us.
+</p>
+
+<br>
+
+<p>
+    Regards,<br>
+    <strong>Harshit Spring AI</strong>
+</p>
+
+</body>
+
+</html>

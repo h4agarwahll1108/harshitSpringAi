@@ -1,4 +1,4 @@
-package ai.model;
+package ai.dto;
 
 public class ChatResponse {
 
