@@ -19,15 +19,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleServiceProvisioningException(
             ServiceProvisioningException ex) {
 
-        return buildResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                ex.getMessage()
-        );
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationException(
-            MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
 
         String message = ex.getBindingResult()
                 .getFieldErrors()
@@ -36,9 +32,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Invalid request");
 
-        return buildResponse(
-                HttpStatus.BAD_REQUEST,
-                message
+        return buildResponse(HttpStatus.BAD_REQUEST, message
         );
     }
 
@@ -46,20 +40,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleConstraintViolation(
             ConstraintViolationException ex) {
 
-        return buildResponse(
-                HttpStatus.BAD_REQUEST,
-                ex.getMessage()
-        );
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(
             Exception ex) {
 
-        return buildResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Internal server error"
-        );
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
 
     private ResponseEntity<?> buildResponse(

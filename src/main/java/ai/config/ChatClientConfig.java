@@ -1,31 +1,38 @@
 package ai.config;
 
+
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.core.io.Resource;
+
+import java.util.Objects;
 
 @Configuration
 public class ChatClientConfig {
 
+    @Value("classpath:/prompts/system-prompt.st")
+    private Resource systemPromptResource;
+
     @Bean
-    public ChatClient chatClient(ChatModel chatModel) {
+    public SystemPromptTemplate systemPromptTemplate() {
+        return new SystemPromptTemplate(systemPromptResource);
+    }
 
-        return ChatClient.builder(chatModel)
+    @Bean
+    public ChatClient chatClient(ChatClient.Builder builder, SystemPromptTemplate systemPromptTemplate) {
 
-                // Common system prompt
-                .defaultSystem("""
-                        You are a helpful AI assistant.
-                        Answer clearly and accurately.
-                        If you don't know the answer, say that you don't know.
-                        """)
-
+        return builder
+                .defaultSystem(Objects.requireNonNull(systemPromptTemplate.createMessage().getText()))
                 // Common options
-                .defaultOptions(ChatOptions.builder()
-                        .temperature(0.7)
-                        .maxTokens(1000)
-                )
+//                .defaultOptions(ChatOptions.builder()
+//                        .temperature(0.7)
+//                        .maxTokens(1000)
+//                )
 
                 // Common advisors can be added here
                 // .defaultAdvisors(...)
@@ -35,4 +42,22 @@ public class ChatClientConfig {
 
                 .build();
     }
+
+
+//    @Bean
+//    ChatClient chatClient(
+//            ChatClient.Builder builder,
+//            MessageChatMemoryAdvisor memoryAdvisor,
+//            QuestionAnswerAdvisor ragAdvisor,
+//            SimpleLoggerAdvisor loggerAdvisor) {
+//
+//        return builder
+//                .defaultAdvisors(
+//                        loggerAdvisor,
+//                        memoryAdvisor,
+//                        ragAdvisor
+//                )
+//                .build();
+//    }
+
 }

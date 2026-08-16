@@ -6,7 +6,8 @@ import ai.repository.EmailService;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,9 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class EmailServiceImpl implements EmailService {
+
+    private final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;

@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
@@ -30,6 +31,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private static final long REFRESH_TOKEN_EXPIRATION = 7L * 24 * 60 * 60 * 1000;
     private final UserRepository userRepository;
@@ -60,8 +63,7 @@ public class AuthService {
         try {
             sendRegistrationEmail(user);
         } catch (Exception e) {
-            e.printStackTrace();
-//            log.error("User registered but registration email failed. email={}",user.getEmail(),e);
+            log.error("User registered but registration email failed. email={}",user.getEmail(),e);
         }
         return generateAuthResponse(userDetails, user);
     }
@@ -99,6 +101,7 @@ public class AuthService {
         return token;
     }
 
+    @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
 
         RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
