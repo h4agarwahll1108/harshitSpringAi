@@ -3,6 +3,7 @@ package ai.serviceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -36,5 +37,33 @@ public class chatService {
                 .doOnComplete(() -> log.info("AI streaming response completed"))
                 .doOnError(error -> log.error("Error while streaming AI response", error)
                 );
+    }
+
+    public String memoryChat(String userId, String conversationId, String message) {
+        String conversation = userId + "-" + conversationId;
+        return chatClient
+                .prompt()
+                .user(message)
+                .advisors(a ->
+                        a.param(
+                                ChatMemory.CONVERSATION_ID,
+                                conversation
+                        ))
+                .call()
+                .content();
+    }
+
+    public Flux<String> streamChat(String userId, String conversationId, String message) {
+        String conversation = userId + "-" + conversationId;
+        return chatClient
+                .prompt()
+                .user(message)
+                .advisors(a ->
+                        a.param(
+                                ChatMemory.CONVERSATION_ID,
+                                conversation
+                        ))
+                .stream()
+                .content();
     }
 }

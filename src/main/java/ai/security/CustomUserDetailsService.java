@@ -1,5 +1,6 @@
 package ai.security;
 
+import ai.dto.CustomUserPrincipal;
 import org.jetbrains.annotations.NotNull;
 import ai.model.User;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,12 @@ public class CustomUserDetailsService
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .authorities(List.of(new SimpleGrantedAuthority(user.getRole())))
-                .disabled(!user.isEnabled())
-                .build();
+//        return org.springframework.security.core.userdetails.User
+//                .withUsername(user.getUsername())
+//                .password(user.getPassword())
+//                .authorities(List.of(new SimpleGrantedAuthority(user.getRole())))
+//                .disabled(!user.isEnabled())
+//                .build();
+        return new CustomUserPrincipal(user);
     }
 }
