@@ -45,10 +45,7 @@ public class ChatService {
             String prompt = buildPrompt(request.getMessage(), memoryContext, request.isUseRag() ? userId : null);
 
             // Call LLM
-            String response = chatClient.prompt()
-                    .user(prompt)
-                    .call()
-                    .content();
+            String response = chatClient.prompt().user(prompt).call().content();
 
             // Save messages to memory
             memoryService.addMessage(finalConversationId, request.getMessage(), ChatMessage.MessageRole.USER);
@@ -56,11 +53,8 @@ public class ChatService {
 
             log.info("Chat completed for user: {} in conversation: {}", userId, finalConversationId);
 
-            return ChatResponse.builder()
-                    .conversationId(finalConversationId)
-                    .response(response)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return ChatResponse.builder().conversationId(finalConversationId).response(response)
+                    .timestamp(LocalDateTime.now()).build();
 
         } catch (Exception e) {
             log.error("Error in chat for user: {}", userId, e);
@@ -86,16 +80,10 @@ public class ChatService {
         // Save user message
         memoryService.addMessage(finalConversationId, request.getMessage(), ChatMessage.MessageRole.USER);
 
-        return chatClient.prompt()
-                .user(prompt)
-                .stream()
-                .content()
-                .filter(token -> !token.isBlank())
-                .doOnNext(token -> log.debug("Token streamed"))
-                .doOnComplete(() -> {
+        return chatClient.prompt().user(prompt).stream().content().filter(token -> !token.isBlank())
+                .doOnNext(token -> log.debug("Token streamed")).doOnComplete(() -> {
                     log.info("Stream completed for user: {} in conversation: {}", userId, finalConversationId);
-                })
-                .doOnError(error -> log.error("Error during streaming", error));
+                }).doOnError(error -> log.error("Error during streaming", error));
     }
 
     private String buildPrompt(String userMessage, String memoryContext, Long userId) {

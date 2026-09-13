@@ -37,15 +37,10 @@ public class DocumentService {
             log.info("File saved: {} for userId: {}", savedFilename, userId);
 
             // Step 2: Create document metadata
-            DocumentEntity document = DocumentEntity.builder()
-                    .userId(userId)
-                    .fileName(file.getOriginalFilename())
-                    .fileType(fileExtension)
-                    .fileSize(file.getSize())
-                    .status(DocumentStatus.UPLOADED)
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build();
+            DocumentEntity document =
+                    DocumentEntity.builder().userId(userId).fileName(file.getOriginalFilename()).fileType(fileExtension)
+                            .fileSize(file.getSize()).status(DocumentStatus.UPLOADED).createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now()).build();
 
             document = documentRepository.save(document);
             log.info("Document metadata saved with id: {}", document.getId());
@@ -70,15 +65,10 @@ public class DocumentService {
                 throw e;
             }
 
-            return DocumentUploadResponse.builder()
-                    .documentId(document.getId())
-                    .fileName(document.getFileName())
-                    .fileType(document.getFileType())
-                    .fileSize(document.getFileSize())
-                    .status(document.getStatus().toString())
-                    .createdAt(document.getCreatedAt())
-                    .message("Document uploaded and indexed successfully")
-                    .build();
+            return DocumentUploadResponse.builder().documentId(document.getId()).fileName(document.getFileName())
+                    .fileType(document.getFileType()).fileSize(document.getFileSize())
+                    .status(document.getStatus().toString()).createdAt(document.getCreatedAt())
+                    .message("Document uploaded and indexed successfully").build();
 
         } catch (Exception e) {
             log.error("Document upload failed for userId: {}", userId, e);
@@ -89,8 +79,8 @@ public class DocumentService {
     public DocumentEntity getDocument(Long documentId) {
         Long userId = securityUtils.getCurrentUserId();
 
-        return documentRepository.findByIdAndUserId(documentId, userId).orElseThrow(() ->
-                new ServiceProvisioningException("Document not found"));
+        return documentRepository.findByIdAndUserId(documentId, userId)
+                .orElseThrow(() -> new ServiceProvisioningException("Document not found"));
     }
 
     public List<DocumentEntity> getMyDocuments() {
@@ -101,8 +91,7 @@ public class DocumentService {
     public void deleteDocument(Long documentId) {
         Long userId = securityUtils.getCurrentUserId();
 
-        DocumentEntity document = documentRepository
-                .findByIdAndUserId(documentId, userId)
+        DocumentEntity document = documentRepository.findByIdAndUserId(documentId, userId)
                 .orElseThrow(() -> new ServiceProvisioningException("Document not found"));
 
         // Delete embeddings from vector store

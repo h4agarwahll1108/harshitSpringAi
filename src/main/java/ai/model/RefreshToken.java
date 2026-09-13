@@ -33,20 +33,45 @@ public class RefreshToken {
         return new Builder();
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public String getToken() {
+        return token;
+    }
 
-    public Instant getExpiryDate() { return expiryDate; }
-    public void setExpiryDate(Instant expiryDate) { this.expiryDate = expiryDate; }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-    public boolean isRevoked() { return revoked; }
-    public void setRevoked(boolean revoked) { this.revoked = revoked; }
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Instant getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Instant expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public boolean isRevoked() {
+        return revoked;
+    }
+
+    public void setRevoked(boolean revoked) {
+        this.revoked = revoked;
+    }
 
     public static class Builder {
         private Long id;
@@ -55,11 +80,30 @@ public class RefreshToken {
         private Instant expiryDate;
         private boolean revoked;
 
-        public Builder id(Long id) { this.id = id; return this; }
-        public Builder token(String token) { this.token = token; return this; }
-        public Builder user(User user) { this.user = user; return this; }
-        public Builder expiryDate(Instant expiryDate) { this.expiryDate = expiryDate; return this; }
-        public Builder revoked(boolean revoked) { this.revoked = revoked; return this; }
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder token(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public Builder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder expiryDate(Instant expiryDate) {
+            this.expiryDate = expiryDate;
+            return this;
+        }
+
+        public Builder revoked(boolean revoked) {
+            this.revoked = revoked;
+            return this;
+        }
 
         public RefreshToken build() {
             RefreshToken rt = new RefreshToken();

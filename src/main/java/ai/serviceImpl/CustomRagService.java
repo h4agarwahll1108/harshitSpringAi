@@ -1,22 +1,19 @@
 package ai.serviceImpl;
 
 import ai.dto.RagResponse;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class CustomRagService {
 
     private static final Logger log = LoggerFactory.getLogger(CustomRagService.class);
@@ -25,7 +22,11 @@ public class CustomRagService {
     private final ChatClient chatClient;
 
     private static final int TOP_K = 5;
-    private static final double SIMILARITY_THRESHOLD = 0.5;
+
+    public CustomRagService(VectorStore vectorStore, @Qualifier("normalChatClient") ChatClient chatClient) {
+        this.vectorStore = vectorStore;
+        this.chatClient = chatClient;
+    }
 
     /**
      * Answer a question using RAG with user-specific context filtering
@@ -44,7 +45,7 @@ public class CustomRagService {
 
             // Step 2: Filter by user ID from metadata
             List<Document> userDocuments = relevantDocs.stream()
-                    .filter(doc -> userId.equals(doc.getMetadata().get("userId")))
+                    .filter(doc -> userId.equals(Long.valueOf(String.valueOf(doc.getMetadata().get("userId")))))
                     .collect(Collectors.toList());
 
             log.info("Found {} relevant documents for user {}", userDocuments.size(), userId);

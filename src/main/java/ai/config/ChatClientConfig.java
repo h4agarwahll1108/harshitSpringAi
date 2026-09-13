@@ -11,6 +11,7 @@ import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvi
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 
 import java.util.Objects;
@@ -34,8 +35,7 @@ public class ChatClientConfig {
     }
 
     @Bean
-    public MessageChatMemoryAdvisor memoryAdvisor(
-            ChatMemory chatMemory) {
+    public MessageChatMemoryAdvisor memoryAdvisor(ChatMemory chatMemory) {
         return MessageChatMemoryAdvisor
                 .builder(chatMemory)
                 .build();
@@ -50,6 +50,7 @@ public class ChatClientConfig {
 
 
     @Bean
+    @Primary
     public ChatClient chatClient(ChatClient.Builder builder,
                                  SystemPromptTemplate systemPromptTemplate,
                                  MessageChatMemoryAdvisor memoryAdvisor,
@@ -69,6 +70,17 @@ public class ChatClientConfig {
                 // Common tools can be added here
                 // .defaultTools(...)
 
+                .build();
+    }
+
+    @Bean
+    public ChatClient normalChatClient(ChatClient.Builder builder, SystemPromptTemplate systemPromptTemplate,
+                                       QuestionAnswerAdvisor ragAdvisor) {
+
+        return builder.defaultSystem(Objects.requireNonNull(systemPromptTemplate
+                                        .createMessage()
+                                        .getText()))
+                .defaultAdvisors(ragAdvisor)
                 .build();
     }
 

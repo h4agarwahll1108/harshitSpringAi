@@ -24,14 +24,12 @@ import java.util.Map;
 public class DocumentEmbeddingService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentEmbeddingService.class);
-
+    private static final int CHUNK_SIZE = 1000;
+    private static final int CHUNK_OVERLAP = 100;
     private final DocumentReaderFactory readerFactory;
     private final TextChunkingService chunkingService;
     private final EmbeddingModel embeddingModel;
     private final VectorStore vectorStore;
-
-    private static final int CHUNK_SIZE = 1000;
-    private static final int CHUNK_OVERLAP = 100;
 
     /**
      * Complete pipeline: Extract → Chunk → Embed → Store

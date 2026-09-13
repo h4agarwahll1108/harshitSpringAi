@@ -18,12 +18,10 @@ import java.util.stream.Collectors;
 public class ConversationMemoryService {
 
     private static final Logger log = LoggerFactory.getLogger(ConversationMemoryService.class);
-
-    private final ChatMessageRepository chatMessageRepository;
-    private final SecurityUtils securityUtils;
-
     private static final int MAX_MEMORY_MESSAGES = 20;
     private static final int CONTEXT_WINDOW_MESSAGES = 10;
+    private final ChatMessageRepository chatMessageRepository;
+    private final SecurityUtils securityUtils;
 
     /**
      * Create a new conversation
