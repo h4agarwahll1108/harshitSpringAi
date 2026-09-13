@@ -1,7 +1,13 @@
 package ai.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatRequest {
 
     @NotBlank(message = "Message cannot be blank")
@@ -9,27 +15,14 @@ public class ChatRequest {
 
     private String conversationId;
 
-    public ChatRequest() {
-    }
+    private boolean useRag;
 
-    public ChatRequest(String message, String conversationId) {
-        this.message = message;
-        this.conversationId = conversationId;
-    }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 
-    public String getMessage() {
-        return message;
-    }
+    public String getConversationId() { return conversationId; }
+    public void setConversationId(String conversationId) { this.conversationId = conversationId; }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(String conversationId) {
-        this.conversationId = conversationId;
-    }
+    public boolean isUseRag() { return useRag; }
+    public void setUseRag(boolean useRag) { this.useRag = useRag; }
 }

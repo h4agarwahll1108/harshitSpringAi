@@ -1,13 +1,11 @@
 package ai.dto;
 
 import ai.model.User;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-@Getter
 public class CustomUserPrincipal implements UserDetails {
 
     private final Long userId;
@@ -28,6 +26,10 @@ public class CustomUserPrincipal implements UserDetails {
         this.enabled = user.isEnabled();
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -46,5 +48,20 @@ public class CustomUserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 }

@@ -1,0 +1,642 @@
+{
+  "info": {
+    "_postman_id": "spring-ai-rag-collection",
+    "name": "Spring AI Document RAG System",
+    "description": "Complete test collection for JWT + Document Upload + RAG + Chat Memory + Streaming",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_a_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_b_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "doc_a_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "conversation_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "AUTH - 1. Register User A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"User A\",\n  \"email\": \"usera@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"role\": \"USER\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "register"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AUTH - 2. Register User B",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"User B\",\n  \"email\": \"userb@example.com\",\n  \"password\": \"SecurePass456!\",\n  \"role\": \"USER\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "register"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AUTH - 3. Login User A",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  pm.collectionVariables.set('access_token', pm.response.json().accessToken);",
+              "  pm.collectionVariables.set('refresh_token', pm.response.json().refreshToken);",
+              "  console.log('User A tokens saved');",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"usera@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AUTH - 4. Refresh Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  pm.collectionVariables.set('access_token', pm.response.json().accessToken);",
+              "  console.log('Access token refreshed');",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/refresh",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "refresh"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DOCUMENT - 5. Upload PDF (User A)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  pm.collectionVariables.set('doc_a_id', pm.response.json().documentId);",
+              "  console.log('PDF uploaded, doc ID: ' + pm.response.json().documentId);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/sample.pdf"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DOCUMENT - 6. Upload DOCX (User A)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/sample.docx"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DOCUMENT - 7. Upload TXT (User A)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/sample.txt"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DOCUMENT - 8. Upload JSON (User A - Employees)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/employees.json"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DOCUMENT - 9. List User A Documents",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/documents",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DOCUMENT - 10. Get Document Details",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/documents/{{doc_a_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "{{doc_a_id}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RAG - 11. Basic RAG Question (User A)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"What is the main topic of the uploaded document?\",\n  \"topK\": 5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rag/ask",
+          "host": ["{{base_url}}"],
+          "path": ["api", "rag", "ask"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RAG - 12. JSON Structured Query (Employee Data)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Who is Rahul and what department does he work in?\",\n  \"topK\": 5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rag/ask",
+          "host": ["{{base_url}}"],
+          "path": ["api", "rag", "ask"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RAG - 13. Employee Salary Query",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"Who has the highest salary and which department are they in?\",\n  \"topK\": 5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rag/ask",
+          "host": ["{{base_url}}"],
+          "path": ["api", "rag", "ask"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CHAT - 14. Create New Conversation (Message 1)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  pm.collectionVariables.set('conversation_id', pm.response.json().conversationId);",
+              "  console.log('Conversation created: ' + pm.response.json().conversationId);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"conversationId\": \"\",\n  \"message\": \"What is this document about?\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/chat",
+          "host": ["{{base_url}}"],
+          "path": ["api", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CHAT - 15. Conversation Follow-up (Message 2 - Memory Test)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"conversationId\": \"{{conversation_id}}\",\n  \"message\": \"What are the three main components?\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/chat",
+          "host": ["{{base_url}}"],
+          "path": ["api", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CHAT - 16. Conversation Detail Question (Message 3 - Context)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"conversationId\": \"{{conversation_id}}\",\n  \"message\": \"Explain the second component in more detail.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/chat",
+          "host": ["{{base_url}}"],
+          "path": ["api", "chat"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CHAT - 17. Stream Response (Real-time Tokens)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"conversationId\": \"{{conversation_id}}\",\n  \"message\": \"Summarize the key points from this document.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/chat/stream",
+          "host": ["{{base_url}}"],
+          "path": ["api", "chat", "stream"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SECURITY - 18. Login User B",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  pm.collectionVariables.set('access_token_b', pm.response.json().accessToken);",
+              "  pm.collectionVariables.set('refresh_token_b', pm.response.json().refreshToken);",
+              "  console.log('User B tokens saved');",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"userb@example.com\",\n  \"password\": \"SecurePass456!\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SECURITY - 19. User B Upload Document",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token_b}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/different-document.pdf"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SECURITY - 20. User B List Documents (should NOT see User A's docs)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token_b}}"}
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/documents",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SECURITY - 21. User A Query User B's Document (Should Fail or Return Empty)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Content-Type", "value": "application/json"},
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"What is in the user B document?\",\n  \"topK\": 5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/rag/ask",
+          "host": ["{{base_url}}"],
+          "path": ["api", "rag", "ask"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SECURITY - 22. Unauthorized Access (No Token)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/documents",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR - 23. Invalid File Type",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/file.exe"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR - 24. File Too Large (>50MB)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/large-file-over-50mb.pdf"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ERROR - 25. Invalid JSON Document",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/invalid.json"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/documents/upload",
+          "host": ["{{base_url}}"],
+          "path": ["api", "documents", "upload"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AUTH - 26. Logout User A",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "Authorization", "value": "Bearer {{access_token}}"}
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/logout",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "logout"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
